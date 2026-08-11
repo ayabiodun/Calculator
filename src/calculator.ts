@@ -1,82 +1,103 @@
-import { checkOperation } from "../dist/operation.js";
+import { checkOperation } from "./operation.js";
+import type { MathOperation} from "./operation.js";
+
 
 export class Calculator{
-    private inputDisplay: HTMLInputElement;
-    private currentElement: string = '0';
-    private previousElement: string = '';
+    private firstNum: string = '';
+    private secondNum: string = '';
     private operator: string = '';
-    private resetDisplay: boolean = false;
+    private inputDisplay: HTMLInputElement;
 
     constructor(displayId: string){
-        this.inputDisplay = document.querySelector(displayId) as HTMLInputElement;
+        this.inputDisplay = document.getElementById(displayId) as HTMLInputElement;
     }
 
-    public appendNumber(num: string): void{
-        if(this.currentElement === '0' || this.resetDisplay){
-            this.currentElement = num;
-            this.resetDisplay = false;
+    appendNumber(num: string): void{
+        if(this.operator === ''){
+            this.firstNum += num;
+            this.updateDisplay(this.firstNum);
+        }else{
+            this.secondNum += num;
+            this.updateDisplay(this.firstNum + this.operator + this.secondNum);
+        }
+
+    }
+
+    appendDecimal(element: string): void{
+        if(this.operator === ''){
+            if(this.firstNum.includes('.')){
+                return;
+            }
+            this.firstNum += element;
+            this.updateDisplay(this.firstNum);
+        }else{
+            if(this.secondNum.includes('.')){
+                return;
+            }
+            this.secondNum += element;
+            this.updateDisplay(this.firstNum + this.operator + this.secondNum);
+        }
+
+    }
+
+    calculate(): void{
+        if(this.firstNum && this.operator && this.secondNum){
+            const num1: number = parseFloat(this.firstNum);
+            const num2: number = parseFloat(this.secondNum);
+
+            const operation: MathOperation = checkOperation(this.operator);
+            let result: number;
+
+            try{
+                result = operation.execute(num1, num2);
+                this.firstNum = String(result);
+                this.secondNum = '';
+                this.operator = '';
+            }catch{
+                this.firstNum = 'Error'
+            }
+
+            this.updateDisplay(this.firstNum);
         }
         else{
-            this.currentElement += num;
+            return;
         }
-
-        this.updateDisplay(this.currentElement);
     }
 
-    public appendDecimal(): void{
-        if(this.resetDisplay){
-            this.currentElement = '0.';
-            this.resetDisplay = false;
-            this.updateDisplay(this.currentElement);
+    clear(): void{
+        this.firstNum = '';
+        this.secondNum = '';
+        this.operator = '';
+        this.inputDisplay.value = '';
+    }
+
+    backspace(): void{
+        const display = this.inputDisplay.value;
+        const removedDisplay = display.slice(0, -1);
+        
+        if(this.operator === ''){
+            this.firstNum = this.firstNum.slice(0, -1);
+        }
+        else if(this.operator !== '' && this.secondNum !== ''){
+            this.secondNum = this.secondNum.slice(0, -1);
+        }
+        else if(this.operator !== '' && this.secondNum === ''){
+            this.operator = '';
+        }else{
             return;
         }
 
-        if(!this.currentElement.includes('.')){
-            this.currentElement += '.';
-            this.updateDisplay(this.currentElement);
-        }
+        this.updateDisplay(removedDisplay);
     }
 
-    public setOperator(operator: string):void{
-        if(this.operator && !this.resetDisplay){
-            this.calculate();
-        }
-        
-        this.previousElement = this.currentElement;
-        this.operator = operator;
-        this.resetDisplay = true;
+    setOperator(opera: string): void{
+        if(!opera) return;
+        this.operator = opera;
+        this.updateDisplay(this.firstNum + this.operator);
     }
 
-    public calculate(): void{
-        if(!this.operator || this.resetDisplay) return;
 
-        const val1 = parseFloat(this.previousElement);
-        const val2 = parseFloat(this.currentElement);
-        const operator = checkOperation(this.operator);
-
-        if(operator){
-            try{
-                const result = operator.execute(val1, val2);
-                this.currentElement = String(result);
-                this.updateDisplay(this.currentElement);
-                this.previousElement = '';
-                this.operator = '';
-            }catch(error){
-                this.clearAll();
-                this.updateDisplay('Error');
-            }
-        }
-    }
-
-    public clearAll(){
-        this.currentElement = '0';
-        this.previousElement = '';
-        this.operator = '';
-        this.resetDisplay = false;
-        this.updateDisplay(this.currentElement);
-    }
-
-    private updateDisplay(element: string): void{
+    updateDisplay(element: string){
         this.inputDisplay.value = element;
     }
 }

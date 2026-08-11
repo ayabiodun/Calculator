@@ -1,41 +1,41 @@
 export abstract class MathOperation{
-    abstract execute(firstNum: number, secondNum: number): number
+    abstract execute(firstNumber: number, secondNumber: number): number
 }
 
 export class Addition extends MathOperation{
-    execute(firstNum: number, secondNum: number): number {
-        return firstNum + secondNum;
+    execute(firstNumber: number, secondNumber: number): number {
+        return firstNumber + secondNumber;
     }
 }
 
 export class Subtraction extends MathOperation{
-    execute(firstNum: number, secondNum: number): number {
-        return firstNum - secondNum;
+    execute(firstNumber: number, secondNumber: number): number {
+        return firstNumber - secondNumber;
     }
 }
 
 export class Multiplication extends MathOperation{
-    execute(firstNum: number, secondNum: number): number {
-        return firstNum * secondNum;
+    execute(firstNumber: number, secondNumber: number): number {
+        return firstNumber * secondNumber;
     }
 }
 
 export class Division extends MathOperation{
-    execute(firstNum: number, secondNum: number): number {
-        if(secondNum === 0){
-            throw new Error('Not divisible by zero');
+    execute(firstNumber: number, secondNumber: number): number {
+        if(secondNumber === 0){
+            throw new Error('Error');
         }
 
-        return firstNum / secondNum;
+        return firstNumber / secondNumber;
     }
 }
 
-export function checkOperation(opera: string): MathOperation | null{
-    switch(opera){
-        case '+': return new Addition();
-        case '-': return new Subtraction();
-        case '*': return new Multiplication();
-        case '/': return new Division();
-        default: return null;
-    }
+
+export function checkOperation(operation: string): MathOperation{
+    if(operation === '+') return new Addition();
+    if(operation === '-') return new Subtraction();
+    if(operation === '*') return new Multiplication();
+    if(operation === '/') return new Division();
+
+    throw new Error('Invalid operation');
 }

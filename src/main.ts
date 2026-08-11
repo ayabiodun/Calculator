@@ -1,31 +1,39 @@
-import { Calculator } from "../dist/calculator.js";
+import { Calculator } from "./calculator.js";
 
-const display = document.querySelector('#display') as HTMLInputElement;
+const myCalculator = new Calculator('display');
 const buttons = document.querySelectorAll('button') as NodeListOf<HTMLButtonElement>;
-const myCalc = new Calculator('#display');
 
 
 buttons.forEach((button) => {
     button.addEventListener('click', () => {
+        const val = button.dataset.value;
         const action = button.dataset.action;
-        const val = button.dataset.value || '';
 
         switch(action){
-            case 'number':
-                myCalc.appendNumber(val);
-                break;
             case 'operator':
-                myCalc.setOperator(val);
+                if(val){
+                    myCalculator.setOperator(val);
+                }
+                break;
+            case 'number':
+                if(val){
+                    myCalculator.appendNumber(val);
+                }
                 break;
             case 'decimal':
-                myCalc.appendDecimal();
+                if(val){
+                    myCalculator.appendDecimal(val);
+                }
                 break;
             case 'calculate':
-                myCalc.calculate();
+                myCalculator.calculate();
                 break;
             case 'clear':
-                myCalc.clearAll();
+                myCalculator.clear();
+                break;
+            case 'backspace':
+                myCalculator.backspace();
                 break;
         }
-    });
-});
+    })
+})
