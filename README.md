@@ -23,8 +23,8 @@ This project focuses on simple calculations.
 
 ## Running the Project
 
-- `git clone `
-- `cd `
+- `git clone https://github.com/ayabiodun/Calculator.git`
+- `cd Calculator`
 - `npm install`
 - Then open the `index.html` file in your preferred web browser
 
