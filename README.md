@@ -26,6 +26,7 @@ This project focuses on simple calculations.
 - `git clone https://github.com/ayabiodun/Calculator.git`
 - `cd Calculator`
 - `npm install`
+- `npx tsc`
 - Then open the `index.html` file in your preferred web browser
 
 ### Reach me:
